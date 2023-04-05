@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react"
-import { getTTNInfo } from "./api/ttn.api"
+import { getDepartmentsInfo, getTTNInfo } from "./api/ttn.api"
 import { TTN } from "./types/ttn.type";
 
 function App() {
   useEffect(() => {
     const fetchTTN = async (ttnNumber: number) => {
       const data: TTN | undefined = await getTTNInfo(ttnNumber);
+      const response = await getDepartmentsInfo("Київ");
 
-      console.log(data);
+      console.log(response);
     };
 
     fetchTTN(20450493068613);
