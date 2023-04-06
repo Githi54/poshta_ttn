@@ -1,20 +1,19 @@
-import { useEffect, useState } from "react"
-import { getDepartmentsInfo, getTTNInfo } from "./api/ttn.api"
-import { TTN } from "./types/ttn.type";
+import { Route, Navigate, Routes } from "react-router-dom";
+import { TTNPage } from "./pages/ttn";
+import { DepartmentsPage } from "./pages/departments";
+import { Navigation } from "./components/Nav";
 
 function App() {
-  useEffect(() => {
-    const fetchTTN = async (ttnNumber: number) => {
-      const data: TTN | undefined = await getTTNInfo(ttnNumber);
-      const response = await getDepartmentsInfo("Київ");
-
-      console.log(response);
-    };
-
-    fetchTTN(20450493068613);
-  }, []);
-
-  return <h1>Hello world!</h1>
+  return (
+    <>
+      <Navigation />
+      <Routes>
+        <Route path="/" element={<TTNPage />} />
+        <Route path="/departments" element={<DepartmentsPage />} />
+        <Route path="*" element={<Navigate to="/" />} />
+      </Routes>
+    </>
+  );
 }
 
-export default App
+export default App;
