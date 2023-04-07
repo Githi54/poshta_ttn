@@ -1,0 +1,20 @@
+.nav_link {
+    text-decoration: none;
+    font-size: large;
+
+    border: 1px solid lightslategray;
+    border-radius: 10px;
+
+    padding: 1rem;
+
+    background-color: lightblue;
+
+    width: max-content;
+}
+
+@media (max-width: 500px) {
+    .nav_link {
+        font-size: small;
+        padding: 0.5rem;
+    }
+}

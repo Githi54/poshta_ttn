@@ -1,3 +1,5 @@
+import "./NavITem.component.css";
+
 import { NavLink } from 'react-router-dom';
 
 type Props = {
@@ -12,6 +14,7 @@ export const NavItem: React.FC<Props> = ({
   return (
     <NavLink
       to={to}
+      className="nav_link"
     >
       {content}
     </NavLink>
