@@ -10,6 +10,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import { getTTNInfo } from "../../api/ttn.api";
 import { TtnItem } from "../../components/TtnItem";
 import { Loading } from "../../components/Loading";
+import { PreviewCard } from "../../components/PreviewCard";
 
 export const TTNPage = () => {
   const [ttn, setTtn] = useState<TTN | null>(null);
@@ -59,7 +60,7 @@ export const TTNPage = () => {
       style={{
         display: "flex",
         flexDirection: "column",
-        gap: "20px",
+        gap: "30px",
       }}
     >
       <Box style={{ display: "flex" }}>
@@ -69,7 +70,7 @@ export const TTNPage = () => {
             placeholder="Введіть номер ТТН"
             value={input}
             style={{
-              position: "fixed",
+              position: "absolute",
               display: "block",
             }}
             onChange={(event) => handleInputChange(event)}
@@ -89,7 +90,7 @@ export const TTNPage = () => {
         </form>
       </Box>
       {isLoad && <Loading isLoad={isLoad} />}
-      {ttn !== null && (<TtnItem ttn={ttn} />)}
+      {ttn !== null ? (<TtnItem ttn={ttn} />) : (<PreviewCard />)}
     </Container>
   );
 };
