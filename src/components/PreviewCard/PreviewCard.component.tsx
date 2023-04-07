@@ -28,7 +28,6 @@ export const PreviewCard = () => {
           fontSize: "24px",
           lineHeight: 1.25,
           paddingBottom: "16px",
-          fontWeight: 500,
           color: "#33332f",
           paddingLeft: "15px",
         }}
