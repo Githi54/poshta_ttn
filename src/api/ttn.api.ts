@@ -1,5 +1,5 @@
 import axios from "axios";
-import { TTN } from "../types/ttn.type";
+import { TTN } from "../typing/types/ttn.type";
 
 const BASE_URL = "https://api.novaposhta.ua/v2.0/json/";
 const API_KEY = "2614b0ce283e2d69a503b8331ee002b3";

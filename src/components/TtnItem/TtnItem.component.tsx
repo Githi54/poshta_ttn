@@ -1,5 +1,5 @@
 import { Box, Typography } from "@mui/material";
-import { TTN } from "../../types/ttn.type";
+import { TTN } from "../../typing/types/ttn.type";
 import { TtnDescription } from "../TtnDescription";
 
 type Props = {

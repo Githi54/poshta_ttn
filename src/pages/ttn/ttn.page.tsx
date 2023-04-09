@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { Box, Button, Container, TextField } from "@mui/material";
-import { TTN } from "../../types/ttn.type";
+import { TTN } from "../../typing/types/ttn.type";
 import SearchIcon from "@mui/icons-material/Search";
 import { getTTNInfo } from "../../api/ttn.api";
 import { TtnItem } from "../../components/TtnItem";
@@ -9,12 +9,14 @@ import { PreviewCard } from "../../components/PreviewCard";
 import { TtnHistory } from "../../components/History";
 
 import "./ttn.page.css";
+import { TtnErrors } from "../../typing/enums/ttnError.enum";
 
 export const TTNPage = () => {
   const [ttn, setTtn] = useState<TTN | null>(null);
   const [input, setInput] = useState("");
   const [isLoad, setIsLoad] = useState(false);
   const [ttnHistory, setTtnHistory] = useState<string[]>([]);
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     const ttnHistoryStr = localStorage.getItem("ttnHistory");
@@ -26,11 +28,18 @@ export const TTNPage = () => {
     if (ttnHistory.length > 0) {
       localStorage.setItem("ttnHistory", ttnHistory.join(" "));
     }
-  }, [ttnHistory]);
+
+    const onlyNumbers = /^[0-9]+$/;
+
+    if (input.trim().length > 0 && !onlyNumbers.test(input)) {
+      setErrorMessage(TtnErrors.ONLY_NUMBERS);
+    }
+  }, [ttnHistory, input]);
 
   const handleInputChange = useCallback(
     (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
       setTtn(null);
+      setErrorMessage("");
 
       const {
         target: { value },
@@ -51,6 +60,17 @@ export const TTNPage = () => {
         event.preventDefault();
       }
 
+      if (errorMessage.trim().length > 0) {
+        return;
+      }
+
+      if (ttnStr.trim().length < 14 || !ttnStr.trim().length) {
+        setErrorMessage(TtnErrors.TTN_LENGTH);
+        return;
+      }
+
+      setErrorMessage("");
+
       if (!ttnStr.trim().length) {
         return;
       }
@@ -61,13 +81,13 @@ export const TTNPage = () => {
       if (response) {
         setTtn(response);
         setIsLoad(false);
-        
+
         if (!ttnHistory.includes(ttnStr)) {
           setTtnHistory([ttnStr, ...ttnHistory]);
         }
       }
     },
-    [ttn]
+    [ttn, errorMessage]
   );
 
   return (
@@ -78,10 +98,16 @@ export const TTNPage = () => {
       }}
       className="ttn_container"
     >
-      <Box style={{display: "flex", flexDirection: "column", gap: "30px"}}>
+      <Box style={{ display: "flex", flexDirection: "column", gap: "40px" }}>
         <Box style={{ display: "flex" }}>
-          <form action="submit" onSubmit={(event) => handleSubmit(input, event)}>
+          <form
+            action="submit"
+            onSubmit={(event) => handleSubmit(input, event)}
+          >
             <TextField
+              error={errorMessage.trim().length > 0}
+              helperText={errorMessage}
+              label={errorMessage.trim().length > 0 ? "Error" : ""}
               variant="outlined"
               placeholder="Введіть номер ТТН"
               value={input}
@@ -107,7 +133,12 @@ export const TTNPage = () => {
         </Box>
         {ttn !== null ? <TtnItem ttn={ttn} /> : <PreviewCard />}
       </Box>
-      <TtnHistory ttnHistory={ttnHistory} setInput={setInput} handleSubmit={handleSubmit} />
+      <TtnHistory
+        ttnHistory={ttnHistory}
+        setInput={setInput}
+        handleSubmit={handleSubmit}
+        setErrorMessage={setErrorMessage}
+      />
       {isLoad && <Loading isLoad={isLoad} />}
     </Container>
   );

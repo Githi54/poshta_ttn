@@ -4,12 +4,14 @@ import "./History.component.css";
 type Props = {
   ttnHistory: string[];
   setInput: (str: string) => void;
+  setErrorMessage: (str: string) => void;
   handleSubmit: (ttnStr: string, event?: React.FormEvent<HTMLFormElement>) => Promise<void>;
 };
 
-export const TtnHistory: React.FC<Props> = ({ ttnHistory, setInput, handleSubmit }) => {
+export const TtnHistory: React.FC<Props> = ({ ttnHistory, setInput, handleSubmit, setErrorMessage }) => {
   const handleClick = (ttn: string) => {
     setInput(ttn);
+    setErrorMessage("");
     handleSubmit(ttn);
   };
 
