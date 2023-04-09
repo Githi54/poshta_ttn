@@ -1,0 +1,9 @@
+.history::-webkit-scrollbar {
+  width: 6px;
+}
+
+.history::-webkit-scrollbar-thumb {
+  background-color: blue; 
+  border-radius: 20px; 
+  width: 2px;
+}

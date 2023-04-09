@@ -1,0 +1,7 @@
+@media (max-width: 600px) {
+  .ttn_container {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+}

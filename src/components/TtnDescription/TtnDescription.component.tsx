@@ -16,6 +16,6 @@ const typographyStyle = {
 export const TtnDescription: React.FC<Props> = ({ name, description }) => (
   <Box style={{ display: "flex", gap: "10px", maxWidth: "320px" }}>
     <Typography style={typographyStyle}>{name}</Typography>
-    <Typography style={typographyStyle}>{description}</Typography>
+    <Typography style={typographyStyle}>{description.length > 0 ? description : "Невідомо"}</Typography>
   </Box>
 );

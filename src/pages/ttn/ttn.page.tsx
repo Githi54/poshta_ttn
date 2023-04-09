@@ -1,21 +1,32 @@
-import { useCallback, useState } from "react";
-import {
-  Box,
-  Button,
-  Container,
-  TextField,
-} from "@mui/material";
+import { useCallback, useEffect, useState } from "react";
+import { Box, Button, Container, TextField } from "@mui/material";
 import { TTN } from "../../types/ttn.type";
 import SearchIcon from "@mui/icons-material/Search";
 import { getTTNInfo } from "../../api/ttn.api";
 import { TtnItem } from "../../components/TtnItem";
 import { Loading } from "../../components/Loading";
 import { PreviewCard } from "../../components/PreviewCard";
+import { TtnHistory } from "../../components/History";
+
+import "./ttn.page.css";
 
 export const TTNPage = () => {
   const [ttn, setTtn] = useState<TTN | null>(null);
   const [input, setInput] = useState("");
   const [isLoad, setIsLoad] = useState(false);
+  const [ttnHistory, setTtnHistory] = useState<string[]>([]);
+
+  useEffect(() => {
+    const ttnHistoryStr = localStorage.getItem("ttnHistory");
+
+    if (ttnHistoryStr && ttnHistory.length === 0) {
+      setTtnHistory(ttnHistoryStr.split(" "));
+    }
+
+    if (ttnHistory.length > 0) {
+      localStorage.setItem("ttnHistory", ttnHistory.join(" "));
+    }
+  }, [ttnHistory]);
 
   const handleInputChange = useCallback(
     (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
@@ -35,62 +46,69 @@ export const TTNPage = () => {
   );
 
   const handleSubmit = useCallback(
-    async (event: React.FormEvent<HTMLFormElement>) => {
-      event.preventDefault();
+    async (ttnStr: string, event?: React.FormEvent<HTMLFormElement>) => {
+      if (event) {
+        event.preventDefault();
+      }
 
-      if (!input.trim().length) {
+      if (!ttnStr.trim().length) {
         return;
-      };
+      }
 
       setIsLoad(true);
-      const response = await getTTNInfo(+input);
-
-      console.log(response);
+      const response = await getTTNInfo(+ttnStr);
 
       if (response) {
         setTtn(response);
         setIsLoad(false);
+        
+        if (!ttnHistory.includes(ttnStr)) {
+          setTtnHistory([ttnStr, ...ttnHistory]);
+        }
       }
     },
-    [ttn, input]
+    [ttn]
   );
 
   return (
     <Container
       style={{
         display: "flex",
-        flexDirection: "column",
         gap: "30px",
       }}
+      className="ttn_container"
     >
-      <Box style={{ display: "flex" }}>
-        <form action="submit" onSubmit={(event) => handleSubmit(event)}>
-          <TextField
-            variant="outlined"
-            placeholder="Введіть номер ТТН"
-            value={input}
-            style={{
-              position: "absolute",
-              display: "block",
-            }}
-            onChange={(event) => handleInputChange(event)}
-          />
-          <Button
-            type="submit"
-            style={{
-              position: "relative",
-              top: "0.5rem",
-              left: "10rem",
-              paddingLeft: "10px",
-              border: "1px solid transparent",
-            }}
-          >
-            <SearchIcon />
-          </Button>
-        </form>
+      <Box style={{display: "flex", flexDirection: "column", gap: "30px"}}>
+        <Box style={{ display: "flex" }}>
+          <form action="submit" onSubmit={(event) => handleSubmit(input, event)}>
+            <TextField
+              variant="outlined"
+              placeholder="Введіть номер ТТН"
+              value={input}
+              style={{
+                position: "absolute",
+                display: "block",
+              }}
+              onChange={(event) => handleInputChange(event)}
+            />
+            <Button
+              type="submit"
+              style={{
+                position: "relative",
+                top: "0.5rem",
+                left: "10rem",
+                paddingLeft: "10px",
+                border: "1px solid transparent",
+              }}
+            >
+              <SearchIcon />
+            </Button>
+          </form>
+        </Box>
+        {ttn !== null ? <TtnItem ttn={ttn} /> : <PreviewCard />}
       </Box>
+      <TtnHistory ttnHistory={ttnHistory} setInput={setInput} handleSubmit={handleSubmit} />
       {isLoad && <Loading isLoad={isLoad} />}
-      {ttn !== null ? (<TtnItem ttn={ttn} />) : (<PreviewCard />)}
     </Container>
   );
 };
