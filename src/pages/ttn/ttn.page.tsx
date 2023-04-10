@@ -21,20 +21,24 @@ export const TTNPage = () => {
   useEffect(() => {
     const ttnHistoryStr = localStorage.getItem("ttnHistory");
 
+    if (!ttnHistoryStr) {
+      localStorage.setItem("ttnHistory", ttnHistory.join(" "));
+    }
+
     if (ttnHistoryStr && ttnHistory.length === 0) {
       setTtnHistory(ttnHistoryStr.split(" "));
     }
 
     if (ttnHistory.length > 0) {
       localStorage.setItem("ttnHistory", ttnHistory.join(" "));
-    }
+    };
 
     const onlyNumbers = /^[0-9]+$/;
 
     if (input.trim().length > 0 && !onlyNumbers.test(input)) {
       setErrorMessage(TtnErrors.ONLY_NUMBERS);
     }
-  }, [ttnHistory, input]);
+  }, [ttnHistory, input, localStorage]);
 
   const handleInputChange = useCallback(
     (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
@@ -84,10 +88,11 @@ export const TTNPage = () => {
 
         if (!ttnHistory.includes(ttnStr)) {
           setTtnHistory([ttnStr, ...ttnHistory]);
+          localStorage.setItem("ttnHistory", ttnHistory.join(" "));
         }
       }
     },
-    [ttn, errorMessage]
+    [ttn, errorMessage, ttnHistory]
   );
 
   return (
